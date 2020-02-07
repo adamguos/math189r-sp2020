@@ -1,0 +1,105 @@
+\documentclass[letter,11pt]{article}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{alltt}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{physics}
+
+\newenvironment{solution}{
+    \vspace{0.16in} {\bf Solution:}
+    
+}{
+	\vspace{0.16in}
+}
+\newcommand{\inti}[4]{
+	\int_{#1}^{#2} #3 \, \mathrm{d} #4
+}
+\newcommand{\intii}[7]{
+	\int_{#1}^{#2} \int_{#3}^{#4} #5 \, \mathrm{d} #6 \, \mathrm{d} #7
+}
+\newcommand{\expected}[1]{
+    \mathbb{E}[#1]
+}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%------------------------------------------------------
+
+\begin{document}
+
+\begin{center}
+    {\bf \Large Math 189R problem set 2} \\
+    \vspace{0.1in}
+    Adam Guo \quad 2020-02-10
+\end{center}
+
+\begin{enumerate}
+    \item \textbf{(Murphy 8.3)} Gradient and Hessian of the log-likelihood for logistic regression.
+
+    \textit{Hint:} Use the \textbf{negative} log-likelihood of logistic regression for this problem.
+
+    \begin{enumerate}
+        \item Let $\sigma(x) = \frac{1}{1 + e^{-x}}$ be the sigmoid function. Show that \[\sigma'(x) = \sigma(x) [1 - \sigma(x)]\]
+
+        \begin{solution}
+        \end{solution}
+
+        \item Using the previous result and the chain rule of calculus, derive an expression for the gradient of the log likelihood for logistic regression.
+
+        \begin{solution}
+        \end{solution}
+
+        \item The Hessian can be written as $\textbf{H} = \textbf{X}^T \textbf{SX}$ where $\textbf{S} = \text{diag}(\mu_1 (1 - \mu_1), \dots, \mu_n (1 - \mu_n))$. Derive this and show that $\textbf{H} \succeq 0$ ($A \succeq 0$ means that $A$ is positive semidefinite).
+
+        \begin{solution}
+        \end{solution}
+    \end{enumerate}
+
+    \newpage
+
+    %----------------------------------
+
+    \item \textbf{(Murphy 2.11)} Derive the normalisation constant ($Z$) for a one dimensional zero-mean Gaussian \[\mathbb{P}(x; \sigma^2) = \frac{1}{Z} \exp(-\frac{x^2}{2\sigma^2})\] such that $\mathbb{P}(x; \sigma^2)$ becomes a valid density.
+
+    \begin{solution}
+    \end{solution}
+
+    \newpage
+
+    %----------------------------------
+
+    \item \textbf{(regression)} In this problem, we will use the online news popularity dataset to set up a model for linear regression. In the starter code, we have already parsed the data for you. However, you might need internet connection to access the data and therefore successfully run the starter code.
+
+    We split the csv file into a training and test set with the first two thirds of the data in the training set and the rest for testing. Of the testing data, we split the first half into a "validation set" (used to optimise hyperparameters while leaving your testing data pristine) and the remaining half as your test set. We will use this data for the remainder of the problem. The goal of this data is to predict the \textbf{log} number of shares a news article will have given the other features.
+
+    \begin{enumerate}
+        \item \textbf{(math)} Show that the maximum a posteriori problem for linear regression with a zero-mean Gaussian prior $\mathbb{P}(\textbf{w}) = \prod_j \mathcal{N}(w_j \mid 0, \tau^2)$ on the weights, \[\argmax_{\textbf{w}} \sum_{i=1}^N \log \mathcal{N}(y_i \mid w_0 + \textbf{w}^T \textbf{x}_i, \sigma^2) + \sum_{j=1}^D \log \mathcal{N}(w_j \mid 0, \tau^2)\] is equivalent to the ridge regression problem \[\argmin \frac{1}{N} \sum_{i=1}^N (y_i - (w_0 + \textbf{w}^T \textbf{x}_i))^2 + \lambda ||w||_2^2\] with $\lambda = \sigma^2/\tau^2$.
+
+        \begin{solution}
+        \end{solution}
+
+        \item \textbf{(math)} Find a closed form solution $\textbf{x}^*$ to the ridge regression problem: \[\text{minimise: } ||A\textbf{x} - \textbf{b}||_2^2 + ||\Gamma \textbf{x}||_2^2\]
+
+        \begin{solution}
+        \end{solution}
+
+        \item \textbf{(implementation)} Attempt to predict the log shares using ridge regression from the previous problem solution. Make sure you include a bias term and \textit{don't regularise the bias term}. Find the optimal regularisation parameter $\lambda$ from the validation set. Plot both $\lambda$ versus the validation RMSE (you should have tried at least 150 parameter settings randomly chosen between 0.0 and 150.0 because the dataset is small) and $\lambda$ versus $||\theta^*||_2$ where $\theta$ is your weight vector. What is the final RMSE on the test set with the optimal $\lambda^*$?
+
+        \begin{solution}
+        \end{solution}
+
+        \item \textbf{(math)} Consider regularised linear regression where we pull the basis term out of the feature vectors. That is, instead of computing $\hat{\textbf{y}} = \theta^T \textbf{x}$ with $\textbf{x}_0 = 1$, we compute $\hat{\textbf{y}} = \theta^T \textbf{x} + b$. This corresponds to solving the optimisation problem \[\text{minimise: } ||A\textbf{x} + b\textbf{1} - \textbf{y}||^2_2 + ||\Gamma \textbf{x}||_2^2\] Solve for the optimal $\textbf{x}^*$ explicitly. Use this closed form to compute the bias term for the previous problem (with the same regularisation strategy). Make sure it is the same.
+
+        \begin{solution}
+        \end{solution}
+
+        \item \textbf{(implementation)} We can also compute the solution to the least squares problem using gradient descent. Consider the same bias-relocated objective \[\text{minimise: } f = ||A\textbf{x} + b\textbf{1} - \textbf{y}||_2^2 + ||\Gamma \textbf{x}||_2^2\] Compute the gradients and run gradient descent. Plot the $l_2$ norm between the optimal $(\textbf{x}^*, b^*)$ vector you computed in closed form and the iterates generated by gradient descent. Hint: your plot should move down and to the left and approach zero as the number of iterations increases. If it doesn't, try decreasing the learning rate.
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}
