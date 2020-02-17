@@ -1,0 +1,132 @@
+\documentclass[letter,11pt]{article}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{alltt}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{physics}
+\usepackage{float}
+\usepackage{bbm}
+
+\newenvironment{solution}{
+    \vspace{0.16in} {\bf Solution:}
+    
+}{
+	\vspace{0.16in}
+}
+\newcommand{\inti}[4]{
+	\int_{#1}^{#2} #3 \, \mathrm{d} #4
+}
+
+%------------------------------------------------------
+
+\begin{document}
+
+\begin{center}
+    {\bf \Large Math 189R problem set 3} \\
+    \vspace{0.1in}
+    Adam Guo \quad 2020-02-17
+\end{center}
+
+\begin{enumerate}
+    \item \textbf{(Murphy 2.16)} Suppose $\theta \sim Beta(a, b)$ such that
+    \[\mathbb{P}(\theta; a, b) = \frac{1}{B(a, b)} \theta^{a - 1} (1 - \theta)^{b - 1} = \frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)} \theta^{a - 1} (1 - \theta)^{b - 1}\]
+    where $B(a, b) = \Gamma(a) \Gamma(b) / \Gamma(a + b)$ is the beta function and $\Gamma(x)$ is the gamma function. Derive the mean, mode, and variance of $\theta$.
+
+    \begin{solution}
+        \begin{align*}
+            \mathbb{E}(\theta; a, b) &= \int_{0}^1 \theta \frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)} \theta^{a - 1} (1 - \theta)^{b - 1} \dd{\theta} \\
+                &= \frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)} \int_0^1 \theta^a (1 - \theta)^{b-1} \dd{\theta} \\
+                &= B(a + 1, b) \left(\frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)}\right) \\
+                &= \left(\frac{\Gamma(a + 1)\Gamma(b)}{\Gamma(a + 1 + b)}\right) \left(\frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)}\right) \\
+                &= \left(\frac{a \Gamma(a)\Gamma(b)}{(a + b)\Gamma(a + b)}\right) \left(\frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)}\right) \\
+                &= \frac{a}{a + b}
+        \end{align*}
+        Mean of $\theta$ is $\frac{a}{a + b}$.
+
+        To find mode, we want to find the maximum of $\mathbb{P}(\theta; a, b)$.
+        \begin{align*}
+            \dv{\theta} \mathbb{P}(\theta; a, b) &= \frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)} (-\theta^{a - 1} (b - 1) (1 - \theta)^{b - 2} + (a - 1) \theta^{a - 2} (1 - \theta)^{b - 1})
+        \end{align*}
+        Set the derivative to 0,
+        \begin{align*}
+            0 &= \frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)} (-\theta^{a - 1} (b - 1) (1 - \theta)^{b - 2} + (a - 1) \theta^{a - 2} (1 - \theta)^{b - 1}) \\
+            0 &= -\theta^{a - 1} (b - 1) (1 - \theta)^{b - 2} + (a - 1) \theta^{a - 2} (1 - \theta)^{b - 1} \\
+            0 &= -\theta(b-1) + (a-1)(1-\theta) \\
+            0 &= -b\theta + \theta + a - a\theta - 1 + \theta \\
+            0 &= \theta(2 - a - b) + a - 1 \\
+            \theta &= \frac{1 - a}{2 - a - b}
+        \end{align*}
+        Mode of $\theta$ is $\frac{1 - a}{2 - a - b}$.
+
+        \begin{align*}
+            Var(\theta; a, b) &= \mathbb{E}(\theta^2) - \mathbb{E}(\theta)^2 \\
+                &= \int_0^1 \frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)} \theta^a (1 - \theta)^{b - 1} \dd{\theta} - \frac{a^2}{(a + b)^2} \\
+                &= \left(\frac{\Gamma(a + 2)\Gamma(b)}{\Gamma(a + 2 + b)}\right) \left(\frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)}\right) - \frac{a^2}{(a + b)^2} \\
+                &= \left(\frac{a(a + 1) \Gamma(a)\Gamma(b)}{(a + b)(a + b + 1) \Gamma(a + b)}\right) \left(\frac{\Gamma(a + b)}{\Gamma(a) \Gamma(b)}\right) - \frac{a^2}{(a + b)^2} \\
+                &= \frac{a(a + 1)}{(a + b)(a + b + 1)} - \frac{a^2}{(a + b)^2} \\
+                &= \frac{a(a + 1)(a + b) - a^2(a + b + 1)}{(a + b)^2(a + b + 1)} \\
+                &= \frac{a^3 + a^2b + a^2 + ab + b - a^3 - a^2b - a^2}{(a + b)^2(a + b + 1)} \\
+                &= \frac{ab}{(a + b)^2(a + b + 1)}
+        \end{align*}
+        Variance of $\theta$ is $\frac{ab}{(a + b)^2(a + b + 1)}$.
+    \end{solution}
+
+    \newpage
+
+    %----------------------------------
+
+    \item \textbf{(Murphy 9)} Show that the multinomial distribution
+    \[Cat(x \mid \mu) = \prod_{i=1}^K \mu_i^{x_i}\]
+    is in the exponential family and show that the generalised linear model corresponding to this distribution is the same as multinomial logistic regression (softmax regression).
+
+    \begin{solution}
+        By Murphy, the exponential family is in the form
+        \[p(x \mid \theta) = h(x)\exp(\theta^T\phi(x) - A(\theta))\]
+        In the multinomial distribution,
+        \[x_k = \mathbbm{1}(x = k)\]
+        Expressing $Cat(x \mid \mu)$ in log form:
+        \begin{align*}
+            p(x\mid\mu) &= \prod_{i=1}^K \mu_i^{x_i} \\
+                        &= \exp(\ln(\prod_{i=1}^K \mu_i^{x_i})) \\
+                        &= \exp(\sum_{i=1}^K x_i\ln(\mu_i))
+        \end{align*}
+        Since $\mu$ is a vector of probabilities for the value of $x$, $\sum_{i=1}^K \mu_i = 1$ and $\mu_K = 1 - \sum_{i=1}^{K-1}\mu_i$. We also have $x_K = 1 - \sum_{i=1}^{K-1}x_i$.
+        \begin{align*}
+            p(x\mid\mu) &= \exp(\sum_{i=1}^{K-1} x_i\ln(\mu_i) + (1 - \sum_{i=1}^{K-1}x_i)\ln(\mu_K)) \\
+                        &= \exp(\sum_{i=1}^{K-1} x_i\ln(\mu_i) + \ln(\mu_K) - \sum_{i=1}^{K-1}x_i(\ln(\mu_K))) \\
+                        &= \exp(\sum_{i=1}^{K-1} x_i\ln(\frac{\mu_i}{\mu_K}) + \ln(\mu_K))
+        \end{align*}
+        Hence, we can write
+        \[p(x\mid\mu) = h(x)\exp(\theta^T\phi(x) - A(\theta))\]
+        where
+        \[h(x) = 1, \quad \theta_i = \ln(\frac{\mu_i}{\mu_K}) \text{ for } 1 \leq i \leq K-1, \quad \phi(x) = x, \quad A(\theta) = -\ln(\mu_K)\]
+        Solving for $\mu_i$ in terms of $\theta_i$,
+        \begin{align*}
+            \theta_i &= \ln(\frac{\mu_i}{\mu_K}) \\
+            \mu_i    &= e^{\theta_i}\mu_K
+        \end{align*}
+        Solving for $\mu_K$,
+        \begin{align*}
+            \mu_K &= 1 - \sum_{i=1}^{K-1}\mu_i \\
+                  &= 1 - \sum_{i=1}^{K-1}e^{\theta_i}\mu_K \\
+            0     &= 1 - \mu_K(1 + \sum_{i=1}^{K-1}e^{\theta_i}) \\
+            \mu_K &= \frac{1}{1 + \sum_{i=1}^{K-1}e^{\theta_i}}
+        \end{align*}
+        Substituting back into $\mu_i$,
+        \[\mu_i = \frac{e^{\theta_i}}{1 + \sum_{i=1}^{K-1}e^{\theta_i}}\]
+        Thus,
+        \[p(x \mid \mu) = \exp(\theta^T\phi(x) - A(\theta))\]
+        where
+        \[\quad A(\theta) = -\ln(\mu_K) = \ln(1 - \sum_{i=1}^{K-1}e^{\theta_i})\]
+        and we can write
+        \[\mu = S(\theta)\]
+        where $S$ is the softmax function. Thus, $Cat(x \mid \mu)$ is in the exponential family, and the generalised linear model is the same as softmax regression.
+    \end{solution}
+\end{enumerate}
+
+\end{document}
